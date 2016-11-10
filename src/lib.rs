@@ -247,8 +247,8 @@ impl FromStr for Rational {
     
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let words: Vec<&str> = s.split('/').collect();
-        let x: i64 = try!(words[0].parse());
-        let y: i64 = try!(words[1].parse());
+        let x: i64 = words[0].parse()?;
+        let y: i64 = words[1].parse()?;
         Ok(Self::new(x, y))
     }
 }
