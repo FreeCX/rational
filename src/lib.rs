@@ -1,4 +1,4 @@
-//! Simple & tiny library for work with rational numbers
+//! Simple & tiny library for working with rational numbers
 use std::ops::{Add, Sub, Mul, Div, Neg};
 use std::cmp::{PartialEq, PartialOrd, Ordering};
 use std::str::FromStr;
@@ -12,11 +12,7 @@ pub struct Rational {
 }
 
 fn gcd(a: i64, b: i64) -> i64 {
-    if a == 0 {
-        b
-    } else {
-        gcd(b % a, a)
-    }
+    if a == 0 { b } else { gcd(b % a, a) }
 }
 
 fn lcm(a: i64, b: i64) -> i64 {
@@ -37,8 +33,10 @@ impl Rational {
     /// assert_eq!(a.value().ok(), Some(5.0));
     /// assert_eq!(b.value().ok(), Some(0.2));
     /// ```
-    pub fn new<N, D>(numerator: N, denominator: D) -> Rational 
-        where N: Into<i64>, D: Into<i64>
+    pub fn new<N, D>(numerator: N, denominator: D) -> Rational
+    where
+        N: Into<i64>,
+        D: Into<i64>,
     {
         Rational {
             numerator: numerator.into(),
@@ -125,15 +123,11 @@ impl Rational {
     pub fn pow(&self, n: i32) -> Self {
         let deg = n.abs() as u32;
         if n < 0 {
-            Rational::new(
-                self.denominator.pow(deg),
-                self.numerator.pow(deg))
+            Rational::new(self.denominator.pow(deg), self.numerator.pow(deg))
         } else if n == 0 {
             Rational::one()
         } else {
-            Rational::new(
-                self.numerator.pow(deg),
-                self.denominator.pow(deg))
+            Rational::new(self.numerator.pow(deg), self.denominator.pow(deg))
         }
     }
 }
@@ -226,12 +220,10 @@ impl PartialOrd for Rational {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         let first = self.numerator * other.denominator < self.denominator * other.numerator;
         let second = self.numerator * other.denominator > self.denominator * other.numerator;
-        if first {
-            Some(Ordering::Less)
-        } else if second {
-            Some(Ordering::Greater)
-        } else {
-            Some(Ordering::Equal)
+        match (first, second) {
+            (true, _) => Some(Ordering::Less),
+            (_, true) => Some(Ordering::Greater),
+            (_, _) => Some(Ordering::Equal),
         }
     }
 }
@@ -244,7 +236,7 @@ impl fmt::Display for Rational {
 
 impl FromStr for Rational {
     type Err = num::ParseIntError;
-    
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let words: Vec<&str> = s.split('/').collect();
         let x: i64 = words[0].parse()?;
@@ -259,30 +251,66 @@ mod rational_test {
 
     #[test]
     fn addition() {
-        assert_eq!(Rational::new(3, 4) + Rational::new(5, 6), Rational::new(19, 12));
-        assert_eq!(Rational::new(1, 2) + Rational::new(2, 4), Rational::new(1, 1));
-        assert_eq!(Rational::new(0, 1) + Rational::new(2, 1), Rational::new(2, 1));
+        assert_eq!(
+            Rational::new(3, 4) + Rational::new(5, 6),
+            Rational::new(19, 12)
+        );
+        assert_eq!(
+            Rational::new(1, 2) + Rational::new(2, 4),
+            Rational::new(1, 1)
+        );
+        assert_eq!(
+            Rational::new(0, 1) + Rational::new(2, 1),
+            Rational::new(2, 1)
+        );
     }
 
     #[test]
     fn substraction() {
-        assert_eq!(Rational::new(1, 2) - Rational::new(2, 2), Rational::new(-1, 2));
-        assert_eq!(Rational::new(10, 2) - Rational::new(4, 1), Rational::new(1, 1));
-        assert_eq!(Rational::new(3, 4) - Rational::new(-1, 4), Rational::new(1, 1));
+        assert_eq!(
+            Rational::new(1, 2) - Rational::new(2, 2),
+            Rational::new(-1, 2)
+        );
+        assert_eq!(
+            Rational::new(10, 2) - Rational::new(4, 1),
+            Rational::new(1, 1)
+        );
+        assert_eq!(
+            Rational::new(3, 4) - Rational::new(-1, 4),
+            Rational::new(1, 1)
+        );
     }
 
     #[test]
     fn multiplication() {
-        assert_eq!(Rational::new(3, 4) * Rational::new(2, 2), Rational::new(3, 4));
-        assert_eq!(Rational::new(1, 2) * Rational::new(0, 2), Rational::new(0, 4));
-        assert_eq!(Rational::new(2, 1) * Rational::new(1, 2), Rational::new(1, 1));
+        assert_eq!(
+            Rational::new(3, 4) * Rational::new(2, 2),
+            Rational::new(3, 4)
+        );
+        assert_eq!(
+            Rational::new(1, 2) * Rational::new(0, 2),
+            Rational::new(0, 4)
+        );
+        assert_eq!(
+            Rational::new(2, 1) * Rational::new(1, 2),
+            Rational::new(1, 1)
+        );
     }
 
     #[test]
     fn division() {
-        assert_eq!(Rational::new(1, 2) / Rational::new(2, 1), Rational::new(1, 4));
-        assert_eq!(Rational::new(3, 4) / Rational::new(1, 2), Rational::new(3, 2));
-        assert_eq!(Rational::new(0, 2) / Rational::new(1, 2), Rational::new(0, 2));
+        assert_eq!(
+            Rational::new(1, 2) / Rational::new(2, 1),
+            Rational::new(1, 4)
+        );
+        assert_eq!(
+            Rational::new(3, 4) / Rational::new(1, 2),
+            Rational::new(3, 2)
+        );
+        assert_eq!(
+            Rational::new(0, 2) / Rational::new(1, 2),
+            Rational::new(0, 2)
+        );
     }
 
     #[test]
